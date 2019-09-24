@@ -1,6 +1,6 @@
 // module.exports = function zeros(expression) {
 function zeros(expression) {
-  const countFactorialZeros = (number, multiplier) => {
+  const countMultiplier = (number, multiplier) => {
     let current = number;
     let counter = 0;
     while (current >= multiplier) {
@@ -10,27 +10,14 @@ function zeros(expression) {
     return counter;
   };
 
-  const countEvenZeros = () => {};
-  
-  const countOddZeros = (number, multiplier) => {
-    let current = number;
-    let counter = 0;
-    while (current >= multiplier) {
-      counter += current % 2 === 0 ? 0 : (current / multiplier) ^ 0;
-      current /= multiplier;
-    }
-    return counter;
-  };
-
   console.log('expression:', expression);
-  
 
   const multipliers = expression.split('*');
 
-  const [factZeros, evenZeros, oddZeros] = multipliers
+  const [factZeros, evenZeros, oddZeros, tens, hundred] = multipliers
     .reduce((acc, multiplier) => {
-      const [factZeros, evenZeros, oddZeros] = acc;
-      console.log(`[--> factZeros, evenZeros, oddZeros]: [${factZeros}, ${evenZeros}, ${oddZeros}]`);
+      const [factZeros, evenZeros, oddZeros, tens, hundred] = acc;
+      console.log(`[--> factZeros, evenZeros, oddZeros, tens, hundred]: [${factZeros}, ${evenZeros}, ${oddZeros}, ${tens}, ${hundred}]`);
 
       const splittedMultiplier = multiplier.split('!');
       
@@ -41,19 +28,38 @@ function zeros(expression) {
       console.log('operation:', operation);
 
       if (operation === '!') {
-        return [factZeros + countFactorialZeros(argument, 5), evenZeros, oddZeros];
+        return [
+          factZeros + countMultiplier(argument, 5),
+          evenZeros,
+          oddZeros,
+          tens,
+          hundred
+        ];
       } else if (operation === '!!' && argument % 2 === 0) {
-        return [factZeros, evenZeros + countEvenZeros(argument, 2), oddZeros + countEvenZeros(argument, 5)];
+        return [
+          factZeros,
+          evenZeros + countMultiplier(argument, 2),
+          oddZeros + countMultiplier(argument, 50),
+          tens + countMultiplier(argument, 10),
+          hundred + countMultiplier(argument, 100)
+        ];
       } else {
-        return [factZeros, evenZeros, oddZeros + countOddZeros(argument, 5)];
+        return [
+          factZeros,
+          evenZeros,
+          oddZeros + countMultiplier(argument, 5) - countMultiplier(argument, 10),
+          tens,
+          hundred
+        ];
       }
-    }, [0, 0, 0,]);
+    }, [0, 0, 0, 0, 0]);
 
-  console.log(`------> [factZeros, evenZeros, oddZeros]: [${factZeros}, ${evenZeros}, ${oddZeros}]`);
+  console.log(`------> [factZeros, evenZeros, oddZeros, tens, hundred]: [${factZeros}, ${evenZeros}, ${oddZeros}, ${tens}, ${hundred}]`);
 
-  // return factZeros + Math.min(evenZeros, oddZeros);
+  return factZeros + Math.min(evenZeros, oddZeros) + tens;
 }
 
 
-const yy = zeros('11!!');
-// console.log(yy);
+// const yy = zeros('100!*100!!');
+const yy = zeros('100!*100!!');
+console.log(yy);
